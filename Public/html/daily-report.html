@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Report</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/dailyreport.css">
+    <script src="/js/security-utils.js"></script>
+    <script src="/js/auth-utils.js"></script>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <h1> Daily Report</h1>
+
+    <div id="date-container">
+        <label for="date">Select Date: </label>
+        <input type="date" id="date" name="date">
+    </div>
+
+    <table id="input-table">
+        <tr>
+            <td>
+                <input type="text" id="material-name" name="material-name"  placeholder="Name of materials"  autocomplete="off">
+                <div id="material-dropdown" class="dropdown hidden"></div>
+                <datalist id="material-list">
+                </datalist>
+            </td>
+
+            <td><input type="number" id="quantity" name="quantity" placeholder="Quantity"></td>
+            <td><input type="text" id="notes" name="notes" placeholder="Notes"></td>
+            <td><button type="submit" class="save-reoprt">Save</button></td>
+        </tr>
+    </table>
+
+    <div id="saved-data-container" class="hidden">
+        <div id="saved-date"></div>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Materials</th>
+                    <th>Quantity</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button type="button" class="send-data hidden">Send Data</button>
+    </div>
+
+    <div>
+    <label for="filter-date">Select Date:</label>
+    <input type="date" id="filter-date" />
+    <button type="button" id="filter-btn">Get Report</button>
+    <table id="materials-table" class="hidden">
+        <thead>
+            <tr>
+                <th>Material Name</th>
+                <th>Quantity</th>
+                <th>Notes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <button type="button" class="print hidden">Print</button>
+    <button type="button" class="export">Export</button>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="/js/xlsx.full.min.js"></script>
+    <script src="/js/header.js"></script>
+    <script src="/js/footer.js"></script>
+    <script src="/js/daily-report.js"></script>
+</body>
+</html>
