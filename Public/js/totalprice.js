@@ -103,7 +103,23 @@ async function initTotalPrice() {
         let totalMaterialPrice = 0;
         let totalLaborPrice = 0;
 
-        data.forEach(item => {
+        // Aggregate data by material name
+        const aggregatedData = data.reduce((acc, item) => {
+            if (!acc[item.materialName]) {
+                acc[item.materialName] = {
+                    materialName: item.materialName,
+                    quantity: 0,
+                    unit: item.unit,
+                    materialPrice: item.materialPrice,
+                    laborPrice: item.laborPrice
+                };
+            }
+            acc[item.materialName].quantity += item.quantity;
+            return acc;
+        }, {});
+
+        // Convert aggregated data back to array
+        Object.values(aggregatedData).forEach(item => {
             const row = document.createElement('tr');
             
             // Calculate individual row totals
@@ -119,8 +135,8 @@ async function initTotalPrice() {
             row.innerHTML = `
                 <td>${item.materialName}</td>
                 <td>${item.quantity} ${item.unit}</td>
-                <td>${item.materialPrice.toFixed(2)} €</td>
-                <td>${item.laborPrice.toFixed(2)} €</td>
+                <td>${rowMaterialCost.toFixed(2)} €</td>
+                <td>${rowLaborCost.toFixed(2)} €</td>
                 <td>${rowTotalPrice.toFixed(2)} €</td>
             `;
             tableBody.appendChild(row);
@@ -144,16 +160,47 @@ async function initTotalPrice() {
             try {
                 const startDate = startDateInput.value;
                 const endDate = endDateInput.value;
-                // Find the grand total from the table
-                const tableBody = document.getElementById('materialsTableBody');
-                const totalRow = tableBody.querySelector('.table-dark.fw-bold');
-                let totalPrice = '0';
+                const dateRange = `${startDate} to ${endDate}`;
                 
-                if (totalRow) {
-                    // Get the total from the last cell in the total row
-                    const totalCell = totalRow.cells[totalRow.cells.length - 1];
-                    totalPrice = totalCell.textContent.replace(' €', '');
+                // Get all the materials from the table
+                const tableBody = document.getElementById('materialsTableBody');
+                const rows = tableBody.querySelectorAll('tr:not(.table-dark)');
+                
+                // Create an array of materials with proper formatting
+                const materials = [];
+                
+                rows.forEach(row => {
+                    if (row.cells.length >= 5) {
+                        const materialName = row.cells[0].textContent;
+                        const quantityText = row.cells[1].textContent.trim();
+                        const quantity = parseFloat(quantityText.split(' ')[0]);
+                        const unit = quantityText.split(' ')[1] || '';
+                        const materialCost = parseFloat(row.cells[2].textContent.replace(' €', ''));
+                        const laborCost = parseFloat(row.cells[3].textContent.replace(' €', ''));
+                        const totalPrice = parseFloat(row.cells[4].textContent.replace(' €', ''));
+                        
+                        // Calculate unit prices
+                        const materialPrice = quantity > 0 ? materialCost / quantity : 0;
+                        const laborPrice = quantity > 0 ? laborCost / quantity : 0;
+                        
+                        materials.push({
+                            materialName,
+                            quantity,
+                            unit,
+                            materialPrice,
+                            laborPrice,
+                            totalPrice,
+                            dateRange,
+                            notes: ''
+                        });
+                    }
+                });
+                
+                if (materials.length === 0) {
+                    throw new Error('No materials found in the table');
                 }
+                
+                console.log(`Saving ${materials.length} materials...`);
                 
                 // Use authenticatedFetch if available, otherwise use fetch with auth headers
                 const fetchFunc = typeof authenticatedFetch === 'function' ? authenticatedFetch : fetch;
@@ -162,22 +209,24 @@ async function initTotalPrice() {
                     ...(typeof authHeader === 'function' ? authHeader() : {})
                 };
                 
+                // Send all materials in a single request
+                console.log('Saving materials:', materials);
                 const response = await fetchFunc('/total-price', {
                     method: 'POST',
                     headers: headers,
-                    body: JSON.stringify({
-                        startDate,
-                        endDate,
-                        totalPrice: parseFloat(totalPrice)
-                    })
+                    body: JSON.stringify({ materials })
                 });
-
+                
+                // Check if the response was successful
                 if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || 'Failed to save total price');
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Failed to save materials: ${response.status} ${response.statusText}`);
                 }
-
-                alert('Total price saved successfully!');
+                
+                const savedMaterials = await response.json();
+                console.log('Materials saved successfully:', savedMaterials);
+                alert('All material data saved successfully!');
             } catch (error) {
                 console.error('Error saving total price:', error);
                 alert('Failed to save total price: ' + error.message);

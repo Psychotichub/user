@@ -6,6 +6,7 @@
     <title>Daily Report</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/dailyreport.css">
+    <!-- Include security and auth utils first -->
     <script src="/js/security-utils.js"></script>
     <script src="/js/auth-utils.js"></script>
 </head>
@@ -13,17 +14,20 @@
     <div id="header-placeholder"></div>
     <h1> Daily Report</h1>
 
+    <!-- Input Data Section -->
     <div id="date-container">
         <label for="date">Select Date: </label>
         <input type="date" id="date" name="date">
     </div>
 
+    <!-- Input Data Table -->
     <table id="input-table">
         <tr>
             <td>
                 <input type="text" id="material-name" name="material-name"  placeholder="Name of materials"  autocomplete="off">
                 <div id="material-dropdown" class="dropdown hidden"></div>
                 <datalist id="material-list">
+                    <!-- Predefined or dynamic material names will go here -->
                 </datalist>
             </td>
 
@@ -33,8 +37,9 @@
         </tr>
     </table>
 
+    <!-- Data Display Table -->
     <div id="saved-data-container" class="hidden">
-        <div id="saved-date"></div>
+        <div id="saved-date"></div> <!-- Display selected date here -->
         <table id="data-table">
             <thead>
                 <tr>
@@ -66,7 +71,7 @@
     </table>
 
     <button type="button" class="print hidden">Print</button>
-    <button type="button" class="export">Export</button>
+    <button type="button" class="export">Export</button> <!-- for excel -->
     </div>
 
     <div id="footer-placeholder"></div>
