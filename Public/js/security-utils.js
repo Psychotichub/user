@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // If no token or user, redirect to login
         if (!token || !user) {
-            console.log('No authentication detected, redirecting to login page');
+            //console.log('No authentication detected, redirecting to login page');
             window.location.href = '/login';
             return;
         }
@@ -73,5 +73,5 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
     applyRoleBasedUI();
     
-    console.log('Security utilities loaded successfully');
+    //console.log('Security utilities loaded successfully');
 }); 

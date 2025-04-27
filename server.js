@@ -74,7 +74,7 @@ app.use((err, _, res, next) => {
         console.log('Connected to MongoDB');
 
         await connectToMongoose();
-        console.log('Connected to Mongoose');
+        //console.log('Connected to Mongoose');
 
 
         app.listen(port, () => {

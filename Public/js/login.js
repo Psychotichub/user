@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Login page loaded, checking authentication status...');
+    //console.log('Login page loaded, checking authentication status...');
     
     // Check if user is already logged in
     // Try to get auth status either from token or via auth-utils.js if loaded
@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof isAuthenticated === 'function') {
         // Use the auth-utils function if available
         isAuthed = isAuthenticated();
-        console.log('Using auth-utils for authentication check:', isAuthed);
+        //console.log('Using auth-utils for authentication check:', isAuthed);
     } else {
         // Fallback to basic token check
         const token = localStorage.getItem('token');
         isAuthed = !!token;
-        console.log('Basic token check:', isAuthed);
+        //console.log('Basic token check:', isAuthed);
     }
     
     if (isAuthed) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.style.display = 'none';
         
         try {
-            console.log('Attempting login for user:', username);
+            //console.log('Attempting login for user:', username);
             
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const data = await response.json();
-            console.log('Login response status:', response.status);
+            //console.log('Login response status:', response.status);
             
             if (!response.ok) {
                 throw new Error(data.message || 'Login failed');
@@ -53,10 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Use the improved token storage function if available
             let storageSuccess = false;
             if (typeof storeAuthData === 'function') {
-                console.log('Using enhanced storage method');
+                //console.log('Using enhanced storage method');
                 storageSuccess = storeAuthData(data.token, data.user);
             } else {
-                console.log('Using standard storage method');
+                //console.log('Using standard storage method');
                 try {
                     // Save authentication data using standard method
                     localStorage.removeItem('token');
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Even if localStorage fails, we might still have HTTP-only cookies
             if (!storageSuccess && !data.token) {
-                console.log('Using HTTP-only cookie for authentication');
+                //console.log('Using HTTP-only cookie for authentication');
                 // We can still proceed if server is using HTTP-only cookies
                 storageSuccess = data.success === true;
             }
@@ -118,17 +118,17 @@ function redirectBasedOnRole() {
         // Try to get user from auth-utils if available
         if (typeof getCurrentUser === 'function') {
             user = getCurrentUser();
-            console.log('Got user from auth-utils:', user ? 'Found' : 'Not found');
+            //console.log('Got user from auth-utils:', user ? 'Found' : 'Not found');
         } else {
             // Fallback to localStorage
             const userStr = localStorage.getItem('user');
             user = userStr ? JSON.parse(userStr) : null;
-            console.log('User data from localStorage:', user ? 'Available' : 'Not available');
+            //console.log('User data from localStorage:', user ? 'Available' : 'Not available');
         }
         
         if (!user) {
             // If we can't determine the user, try to fetch current user from API
-            console.log('No user data found, attempting to fetch from API');
+            //console.log('No user data found, attempting to fetch from API');
             
             // Make an API call to get current user
             fetch('/api/auth/current-user', {
@@ -148,7 +148,7 @@ function redirectBasedOnRole() {
                 if (data.user) {
                     // Store user data
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    console.log('Redirecting user with role from API:', data.user.role || 'unknown');
+                    //console.log('Redirecting user with role from API:', data.user.role || 'unknown');
                     window.location.href = '/index';
                 } else {
                     throw new Error('No user data returned from API');
@@ -162,7 +162,7 @@ function redirectBasedOnRole() {
             return; // Return while fetch is in progress
         }
         
-        console.log('Redirecting user with role:', user.role || 'unknown');
+        //console.log('Redirecting user with role:', user.role || 'unknown');
         
         // Redirect to index page
         window.location.href = '/index';

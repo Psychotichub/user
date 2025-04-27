@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Check if user is authenticated
     if (!isAuthenticated()) {
-        console.log('Not authenticated, redirecting to login page');
+        //console.log('Not authenticated, redirecting to login page');
         window.location.href = '/login';
         return;
     }
@@ -19,5 +19,5 @@ document.addEventListener('DOMContentLoaded', function() {
     applyRoleBasedUIChanges();
     
     // Display authentication status
-    console.log('Index page loaded, authentication verified');
-}); 
+    //console.log('Index page loaded, authentication verified');
+});

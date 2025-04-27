@@ -6,7 +6,7 @@ function getToken() {
     const token = localStorage.getItem('token');
     
     // Debug the token retrieval
-    console.log('Token retrieved from localStorage:', token ? 'Token exists' : 'No token found');
+    //console.log('Token retrieved from localStorage:', token ? 'Token exists' : 'No token found');
     
     return token;
 }
@@ -23,7 +23,7 @@ function decodeToken(token) {
         
         // Check if token is expired
         if (payload.exp && payload.exp * 1000 < Date.now()) {
-            console.log('Token has expired');
+            //console.log('Token has expired');
             return null;
         }
         
@@ -40,7 +40,7 @@ function getCurrentUser() {
     
     // If user data exists in localStorage, use it
     if (userStr) {
-        console.log('User retrieved from localStorage');
+        //console.log('User retrieved from localStorage');
         return JSON.parse(userStr);
     }
     
@@ -49,7 +49,7 @@ function getCurrentUser() {
     if (token) {
         const decoded = decodeToken(token);
         if (decoded) {
-            console.log('User retrieved from token payload');
+            //console.log('User retrieved from token payload');
             return {
                 id: decoded.id,
                 username: decoded.username,
@@ -58,7 +58,7 @@ function getCurrentUser() {
         }
     }
     
-    console.log('No user found');
+    //console.log('No user found');
     return null;
 }
 
@@ -68,7 +68,7 @@ function isAuthenticated() {
     
     // If no token, user is not authenticated
     if (!token) {
-        console.log('No token found, not authenticated');
+        //console.log('No token found, not authenticated');
         return false;
     }
     
@@ -76,7 +76,7 @@ function isAuthenticated() {
     const decoded = decodeToken(token);
     const isAuth = !!decoded;
     
-    console.log('Authentication check result:', isAuth);
+    //console.log('Authentication check result:', isAuth);
     return isAuth;
 }
 
@@ -138,7 +138,7 @@ function logout() {
 function authHeader() {
     const token = getToken();
     const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    console.log('Auth headers:', token ? 'Authorization header added' : 'No authorization header');
+    //console.log('Auth headers:', token ? 'Authorization header added' : 'No authorization header');
     return headers;
 }
 
@@ -155,7 +155,7 @@ function storeAuthData(token, user) {
         
         // Verify storage was successful
         const storedToken = localStorage.getItem('token');
-        console.log('Token storage verification:', storedToken === token ? 'Success' : 'Failed');
+        //console.log('Token storage verification:', storedToken === token ? 'Success' : 'Failed');
         
         return storedToken === token;
     } catch (error) {
@@ -183,14 +183,14 @@ async function authenticatedFetch(url, options = {}) {
     options.credentials = 'include';
 
     // Debug the request
-    console.log(`Authenticated request to: ${url}`);
-    console.log('Request has auth token:', !!token);
+    //console.log(`Authenticated request to: ${url}`);
+    //console.log('Request has auth token:', !!token);
 
     try {
         const response = await fetch(url, options);
         
         // Log the response status
-        console.log(`Response status for ${url}: ${response.status}`);
+        //console.log(`Response status for ${url}: ${response.status}`);
         
         // Handle authentication errors
         if (response.status === 401) {
@@ -259,18 +259,18 @@ async function tryRefreshToken() {
 
 // Check for authentication on page load and redirect if needed
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Auth utils loaded, checking authentication...");
+    //console.log("Auth utils loaded, checking authentication...");
     
     // Get the current page URL
     const currentPage = window.location.pathname;
-    console.log("Current page:", currentPage);
+    //console.log("Current page:", currentPage);
     
     // Pages that don't require authentication
     const publicPages = ['/login', '/html/login.html'];
     
     // If the current page is not a public page and user is not authenticated
     if (!publicPages.some(page => currentPage.includes(page)) && !isAuthenticated()) {
-        console.log("Not authenticated, redirecting to login page");
+        //console.log("Not authenticated, redirecting to login page");
         // Redirect to login page
         window.location.href = '/login';
         return;
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // If authenticated, apply role-based UI changes
     if (isAuthenticated()) {
-        console.log("Authenticated, applying role-based UI changes");
+        //console.log("Authenticated, applying role-based UI changes");
         applyRoleBasedUIChanges();
     }
 });
@@ -293,5 +293,5 @@ function applyRoleBasedUIChanges() {
         });
     }
     
-    console.log("Security utilities loaded successfully");
+    //console.log("Security utilities loaded successfully");
 } 
