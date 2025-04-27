@@ -12,6 +12,7 @@
 </head>
 <body>
     <div id="header-placeholder"></div>
+
     <h1> Daily Report</h1>
 
     <!-- Input Data Section -->
@@ -69,24 +70,23 @@
     </div>
 
     <div>
-    <label for="filter-date">Select Date:</label>
-    <input type="date" id="filter-date" />
-    <button type="button" id="filter-btn">Get Report</button>
-    <table id="materials-table" class="hidden">
-        <thead>
-            <tr>
-                <th>Material Name</th>
-                <th>Quantity</th>
-                <th>Location</th>
-                <th>Notes</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <button type="button" class="print hidden">Print</button>
-    <button type="button" class="export">Export</button> <!-- for excel -->
+        <label for="filter-date">Select Date:</label>
+        <input type="date" id="filter-date" />
+        <button type="button" id="filter-btn">Get Report</button>
+            <table id="materials-table" class="hidden">
+                <thead>
+                    <tr>
+                        <th>Material Name</th>
+                        <th>Quantity</th>
+                        <th>Location</th>
+                        <th>Notes</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                </table>
+        <button type="button" class="print hidden">Print</button>
+        <button type="button" class="export">Export</button> <!-- for excel -->
     </div>
 
     <div id="footer-placeholder"></div>
