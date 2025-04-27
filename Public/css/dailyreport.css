@@ -105,6 +105,7 @@ button {
     display: inline-block;
     line-height: fit-content;
     outline: none;
+    padding: .4rem;
     text-decoration: none;
     transition: all 235ms ease-in-out;
     border-bottom-left-radius: 15px 255px;
@@ -135,6 +136,7 @@ button {
     display: inline-block;
     line-height: fit-content;
     outline: none;
+    padding: .4rem;
     text-decoration: none;
     transition: all 235ms ease-in-out;
     border-bottom-left-radius: 15px 255px;

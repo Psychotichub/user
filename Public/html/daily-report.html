@@ -73,8 +73,8 @@
         <label for="filter-date">Select Date:</label>
         <input type="date" id="filter-date" />
         <button type="button" id="filter-btn">Get Report</button>
-        <button type="button" id="prevButton">&larr;</button>
-        <button type="button" id="nextButton">&rarr;</button>
+        <button type="button" id="prevButton" class="hidden">&larr;</button>
+        <button type="button" id="nextButton" class="hidden">&rarr;</button>
             <table id="materials-table" class="hidden">
                 <thead>
                     <tr>
@@ -88,7 +88,7 @@
                 <tbody></tbody>
                 </table>
         <button type="button" class="print hidden">Print</button>
-        <button type="button" class="export">Export</button> <!-- for excel -->
+        <button type="button" class="export hidden">Export</button> <!-- for excel -->
     </div>
 
     <div id="footer-placeholder"></div>
