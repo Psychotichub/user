@@ -1,24 +1,81 @@
 // Authentication utilities for handling login, permissions, and role-based access control
 
-// Function to get the token from localStorage
+// Function to get the token from localStorage or cookies
 function getToken() {
+    // Try getting from localStorage first
     const token = localStorage.getItem('token');
+    
     // Debug the token retrieval
     console.log('Token retrieved from localStorage:', token ? 'Token exists' : 'No token found');
+    
     return token;
+}
+
+// Function to decode JWT token without verification
+function decodeToken(token) {
+    try {
+        if (!token) return null;
+        
+        // Split the token and get the payload part
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(window.atob(base64));
+        
+        // Check if token is expired
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+            console.log('Token has expired');
+            return null;
+        }
+        
+        return payload;
+    } catch (e) {
+        console.error('Error decoding token:', e);
+        return null;
+    }
 }
 
 // Function to get the current user information
 function getCurrentUser() {
     const userStr = localStorage.getItem('user');
-    // Debug the user retrieval
-    console.log('User retrieved from localStorage:', userStr ? 'User exists' : 'No user found');
-    return userStr ? JSON.parse(userStr) : null;
+    
+    // If user data exists in localStorage, use it
+    if (userStr) {
+        console.log('User retrieved from localStorage');
+        return JSON.parse(userStr);
+    }
+    
+    // Otherwise try to get user info from token
+    const token = getToken();
+    if (token) {
+        const decoded = decodeToken(token);
+        if (decoded) {
+            console.log('User retrieved from token payload');
+            return {
+                id: decoded.id,
+                username: decoded.username,
+                role: decoded.role
+            };
+        }
+    }
+    
+    console.log('No user found');
+    return null;
 }
 
 // Function to check if user is authenticated
 function isAuthenticated() {
-    const isAuth = !!getToken();
+    const token = getToken();
+    
+    // If no token, user is not authenticated
+    if (!token) {
+        console.log('No token found, not authenticated');
+        return false;
+    }
+    
+    // Check if token is valid by decoding it
+    const decoded = decodeToken(token);
+    const isAuth = !!decoded;
+    
     console.log('Authentication check result:', isAuth);
     return isAuth;
 }
@@ -65,6 +122,15 @@ function canPerformAction(action) {
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    
+    // Also try to clear HTTP-only cookie by making a fetch request
+    fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include' // Include cookies
+    }).catch(error => {
+        console.error('Error logging out:', error);
+    });
+    
     window.location.href = '/login';
 }
 
@@ -72,7 +138,6 @@ function logout() {
 function authHeader() {
     const token = getToken();
     const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    // Debug the headers being sent
     console.log('Auth headers:', token ? 'Authorization header added' : 'No authorization header');
     return headers;
 }
@@ -113,6 +178,9 @@ async function authenticatedFetch(url, options = {}) {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         'Content-Type': 'application/json'
     };
+    
+    // Always include credentials to send cookies
+    options.credentials = 'include';
 
     // Debug the request
     console.log(`Authenticated request to: ${url}`);
@@ -124,16 +192,20 @@ async function authenticatedFetch(url, options = {}) {
         // Log the response status
         console.log(`Response status for ${url}: ${response.status}`);
         
-        // If response is 401 (Unauthorized), logout and redirect to login
+        // Handle authentication errors
         if (response.status === 401) {
             console.error("Authentication error: Unauthorized access");
-            // Try to retrieve the response body for debugging
-            try {
-                const errorData = await response.clone().text();
-                console.error("Server error response:", errorData);
-            } catch (e) {
-                console.error("Could not read error response");
+            
+            // Try to refresh token first before logging out
+            const refreshed = await tryRefreshToken();
+            if (refreshed) {
+                // Retry the original request with the new token
+                const newToken = getToken();
+                options.headers['Authorization'] = `Bearer ${newToken}`;
+                return fetch(url, options);
             }
+            
+            // If refresh failed, logout
             logout();
             throw new Error('Your session has expired. Please login again.');
         }
@@ -150,40 +222,29 @@ async function authenticatedFetch(url, options = {}) {
     }
 }
 
-// Function to refresh token or retry login if needed
+// Function to refresh token
 async function tryRefreshToken() {
     try {
         const token = getToken();
         if (!token) return false;
         
-        // Attempt to validate the current token with the server
-        const response = await fetch('/api/validate-token', {
+        // Attempt to refresh token
+        const response = await fetch('/api/auth/refresh-token', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include' // Include cookies
         });
         
         if (response.ok) {
-            // Token is still valid
-            return true;
-        }
-        
-        // Token is invalid, attempt to refresh
-        const refreshResponse = await fetch('/api/refresh-token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        
-        if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
+            const data = await response.json();
             if (data.token) {
                 // Store the new token
                 localStorage.setItem('token', data.token);
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                }
                 return true;
             }
         }

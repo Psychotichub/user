@@ -1,5 +1,9 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_only_for_development';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 
 // Register a new user
 exports.register = async (req, res) => {
@@ -9,7 +13,10 @@ exports.register = async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ message: 'Username already exists' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Username already exists' 
+      });
     }
 
     // Only admins can create admin accounts
@@ -17,16 +24,25 @@ exports.register = async (req, res) => {
       // Get token from header
       const token = req.headers.authorization?.split(' ')[1];
       if (!token) {
-        return res.status(401).json({ message: 'Authentication required to create admin account' });
+        return res.status(401).json({ 
+          success: false,
+          message: 'Authentication required to create admin account' 
+        });
       }
 
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
         if (decoded.role !== 'admin') {
-          return res.status(403).json({ message: 'Only admins can create admin accounts' });
+          return res.status(403).json({ 
+            success: false,
+            message: 'Only admins can create admin accounts' 
+          });
         }
       } catch (error) {
-        return res.status(401).json({ message: 'Invalid token' });
+        return res.status(401).json({ 
+          success: false,
+          message: 'Invalid token' 
+        });
       }
     }
 
@@ -44,13 +60,18 @@ exports.register = async (req, res) => {
     delete userResponse.password;
 
     res.status(201).json({
+      success: true,
       message: 'User registered successfully',
       user: userResponse
     });
 
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 };
 
@@ -62,23 +83,46 @@ exports.login = async (req, res) => {
     // Find user
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid credentials' 
+      });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid credentials' 
+      });
     }
 
-    // Create token
+    // Create token with better security
     const token = jwt.sign(
-      { id: user._id, username: user.username, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { 
+        id: user._id, 
+        username: user.username, 
+        role: user.role,
+        // Add timestamp to help with token refreshing
+        iat: Math.floor(Date.now() / 1000)
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
     );
 
+    // Set HTTP-only cookie for better security
+    if (req.cookies) {
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        sameSite: 'strict'
+      });
+    }
+
     res.status(200).json({
+      success: true,
       message: 'Login successful',
       token,
       user: {
@@ -90,7 +134,11 @@ exports.login = async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 };
 
@@ -99,12 +147,22 @@ exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
     }
-    res.status(200).json(user);
+    res.status(200).json({
+      success: true,
+      user
+    });
   } catch (error) {
     console.error('Get current user error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 };
 
@@ -113,13 +171,23 @@ exports.getAllUsers = async (req, res) => {
   try {
     // Check if user is admin
     if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied. Admin role required.' });
+      return res.status(403).json({ 
+        success: false,
+        message: 'Access denied. Admin role required.' 
+      });
     }
 
     const users = await User.find().select('-password');
-    res.status(200).json(users);
+    res.status(200).json({
+      success: true,
+      users
+    });
   } catch (error) {
     console.error('Get all users error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error', 
+      error: error.message 
+    });
   }
 }; 

@@ -159,6 +159,15 @@ button.print:hover {
     margin: 5px 0;
 }
 
+#input-table select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: fit-content;
+}
+
 #saved-data-container {
     width: fit-content;
     max-width: 800px;
