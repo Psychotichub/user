@@ -154,9 +154,7 @@ async function initMonthlyReport() {
         printWindow.print();
     };
 
-    // Export to Excel
-    exportExcelButton.addEventListener('click', exportToExcel);
-
+    // Define exportToExcel function before using it
     const exportToExcel = () => {
         const workbook = XLSX.utils.book_new();
         const table = monthlyReportDiv.querySelector('table');
@@ -177,4 +175,7 @@ async function initMonthlyReport() {
         XLSX.utils.book_append_sheet(workbook, ws, 'Monthly Report');
         XLSX.writeFile(workbook, `Monthly_Report_${showDate.innerHTML.replace('Situation for Date: ', '')}.xlsx`);
     };
+
+    // Export to Excel - attach event listener after function is defined
+    exportExcelButton.addEventListener('click', exportToExcel);
 }

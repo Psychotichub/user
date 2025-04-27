@@ -144,6 +144,12 @@ nav {
     flex-direction: column;
     align-items: center;
     padding: 10px;
+    height: auto;
+  }
+
+  .logo {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
   }
 
   nav {
@@ -155,10 +161,11 @@ nav {
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
+    padding: 5px 0;
   }
 
   .nav-menu li {
-    margin: 5px;
+    margin: 3px;
   }
 
   .nav-menu a {
@@ -170,29 +177,78 @@ nav {
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    padding: 15px 10px;
   }
 
   .social {
     margin-top: 10px;
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .social li {
+    margin: 2px;
+  }
+
+  .social a {
+    font-size: 0.9rem;
+    padding: 4px 7px;
   }
 
   #date-time {
     font-size: 0.9rem;
+    padding: 8px;
+    text-align: center;
   }
 
-  .logo {
-    font-size: 1.5rem;
+  body {
+    padding-top: 120px; /* Adjust based on the height of your header */
   }
 }
 
 @media (max-width: 480px) {
+  .header {
+    padding: 8px 5px;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
   .nav-menu {
     flex-direction: column;
-    align-items: center;
+    width: 100%;
+    gap: 5px;
   }
   
   .nav-menu li {
-    margin: 3px 0;
+    width: 100%;
+    margin: 2px 0;
+    text-align: center;
+  }
+
+  .nav-menu a {
+    padding: 8px;
+    width: 100%;
+    display: block;
+    font-size: 0.85rem;
+  }
+
+  .footer {
+    padding: 12px 5px;
+  }
+
+  .social {
+    gap: 10px;
+  }
+
+  #date-time {
+    font-size: 0.8rem;
+  }
+
+  body {
+    padding-top: 200px; /* Adjust based on the height of your expanded menu */
+    padding-bottom: 60px;
   }
 }

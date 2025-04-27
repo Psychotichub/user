@@ -11,6 +11,7 @@ function initDailyReport() {
     const dateInput = document.getElementById('date');
     const materialNameInput = document.getElementById('material-name');
     const quantityInput = document.getElementById('quantity');
+    const locationInput = document.getElementById('location');
     const notesInput = document.getElementById('notes');
     const saveButton = document.querySelector('.save-reoprt');
     const dataTable = document.querySelector('#data-table tbody');
@@ -27,6 +28,7 @@ function initDailyReport() {
     const clearInputs = () => {
         materialNameInput.value = '';
         quantityInput.value = '';
+        locationInput.value = '';
         notesInput.value = '';
     };
 
@@ -120,11 +122,12 @@ function initDailyReport() {
     saveButton.addEventListener('click', async () => {
         const materialName = materialNameInput.value.trim();
         const quantity = quantityInput.value.trim();
+        const location = locationInput.value.trim();
         const notes = notesInput.value.trim();
         const date = dateInput.value;
 
-        if (!materialName || !quantity || !date || !selectedUnit) {
-            alert('Please fill in all required fields, including selecting a material and unit.');
+        if (!materialName || !quantity || !date || !selectedUnit || !location) {
+            alert('Please fill in all required fields, including selecting a material, unit, and location.');
             return;
         }
 
@@ -135,6 +138,7 @@ function initDailyReport() {
             materialName,
             quantity: Number(quantity),
             unit,
+            location,
             notes,
             date: new Date(date).toLocaleDateString('en-CA').split('T')[0]
         };
@@ -192,7 +196,8 @@ function initDailyReport() {
                 materialName: cells[0].textContent.trim(),
                 quantity: Number(quantity),
                 unit: unit.trim(),
-                notes: cells[2].textContent.trim(),
+                location: cells[2].textContent.trim(),
+                notes: cells[3].textContent.trim(),
                 date: dateInput.value
             };
         });
@@ -249,6 +254,7 @@ function initDailyReport() {
                 row.innerHTML = `
                     <td>${report.materialName}</td>
                     <td>${report.quantity} ${report.unit}</td>
+                    <td>${report.location}</td>
                     <td>${report.notes || ''}</td>
                     <td>
                         <button class="edit-btn" data-id="${report._id}">Edit</button>
@@ -293,11 +299,23 @@ function initDailyReport() {
             const row = event.target.closest('tr');
             const materialName = row.children[0].textContent.trim();
             const quantity = row.children[1].textContent.split(' ')[0].trim();
+            const location = row.children[2].textContent.trim();
             const unit = row.children[1].textContent.split(' ')[1].trim();
-            const notes = row.children[2].textContent.trim();
+            const notes = row.children[3].textContent.trim();
 
             materialNameInput.value = materialName;
             quantityInput.value = quantity;
+            locationInput.value = location;
+            
+            // Select the correct option in the location dropdown
+            const locationOptions = locationInput.options;
+            for (let i = 0; i < locationOptions.length; i++) {
+                if (locationOptions[i].value === location) {
+                    locationOptions[i].selected = true;
+                    break;
+                }
+            }
+            
             notesInput.value = notes;
             selectedUnit = unit;
             saveButton.textContent = 'Update';
@@ -380,6 +398,7 @@ function initDailyReport() {
         ws['!cols'] = [
             { wch: 20 }, // Material Name
             { wch: 15 }, // Quantity
+            { wch: 30 }, // Location
             { wch: 30 }  // Notes
         ];
 

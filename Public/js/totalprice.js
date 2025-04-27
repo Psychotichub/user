@@ -21,6 +21,7 @@ async function initTotalPrice() {
     const contentElement = document.getElementById('content');
     const exportElement = document.getElementById('export');
     const saveButton = document.getElementById('save');
+    const locationInput = document.getElementById('location');
 
     const showElement = (element) => element.classList.remove('hidden');
     const hideElement = (element) => element.classList.add('hidden');
@@ -85,17 +86,61 @@ async function initTotalPrice() {
                 };
             });
 
+            // Store the combined data globally for filtering by location
+            window.allCombinedData = combinedData;
+
             displayTotalPrice(combinedData, formattedStartDate, formattedEndDate);
             showElement(contentElement);
             showElement(exportElement);
+            
+            // Show location dropdown after fetching data
+            showElement(locationInput);
         } catch (error) {
             console.error('Error fetching data:', error);
             alert('Failed to fetch data. Please try again.');
         }
     });
 
-    const displayTotalPrice = (data, startDate, endDate) => {
-        selectedDateRangeElement.textContent = `Data for: ${startDate} to ${endDate}`;
+    // Add location filter functionality
+    locationInput.addEventListener('change', () => {
+        const selectedLocation = locationInput.value;
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        
+        if (!window.allCombinedData) {
+            alert('Please fetch data first.');
+            return;
+        }
+        
+        // If no location is selected, show all data
+        if (!selectedLocation) {
+            displayTotalPrice(window.allCombinedData, startDate, endDate);
+            return;
+        }
+        
+        // Filter data by selected location
+        const filteredData = window.allCombinedData.filter(item => item.location === selectedLocation);
+        
+        if (filteredData.length === 0) {
+            alert(`No data found for location: ${selectedLocation}`);
+            // Reset the dropdown to default
+            locationInput.value = '';
+            // Show all data
+            displayTotalPrice(window.allCombinedData, startDate, endDate);
+            return;
+        }
+        
+        // Display filtered data
+        displayTotalPrice(filteredData, startDate, endDate, selectedLocation);
+    });
+
+    const displayTotalPrice = (data, startDate, endDate, selectedLocation = '') => {
+        let dateRangeText = `Data for: ${startDate} to ${endDate}`;
+        if (selectedLocation) {
+            dateRangeText += ` From: ${selectedLocation}`;
+        }
+        selectedDateRangeElement.textContent = dateRangeText;
+        
         const tableBody = document.getElementById('materialsTableBody');
         tableBody.innerHTML = '';
 
@@ -161,6 +206,7 @@ async function initTotalPrice() {
                 const startDate = startDateInput.value;
                 const endDate = endDateInput.value;
                 const dateRange = `${startDate} to ${endDate}`;
+                const selectedLocation = locationInput.value;
                 
                 // Get all the materials from the table
                 const tableBody = document.getElementById('materialsTableBody');
@@ -191,6 +237,7 @@ async function initTotalPrice() {
                             laborPrice,
                             totalPrice,
                             dateRange,
+                            location: selectedLocation || '', // Include selected location
                             notes: ''
                         });
                     }

@@ -179,40 +179,98 @@ button:hover {
 /* Responsive Design */
 @media (max-width: 768px) {
     body {
-        margin: 150px 0;
-        padding: 1rem;
+        margin: 120px 0 50px;
+        padding: 0.75rem;
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
     }
 
     #monthly-report {
-        font-size: 0.7rem;
+        width: 95%;
+        margin: 15px auto;
+        padding: 15px 10px;
+    }
+
+    #monthly-report table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        width: 100%;
     }
 
     #monthly-report th,
     #monthly-report td {
-        padding: 10px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
     }
 
     #date {
-        font-size: 1rem;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .clickable-date-range {
+        padding: 8px 5px;
+        margin: 5px 0;
+        width: 100%;
+        display: block;
+    }
+
+    button {
+        margin: 10px;
+        padding: 8px;
+        font-size: 0.8rem;
+        display: inline-block;
     }
 }
 
 @media (max-width: 480px) {
     body {
-        margin: 150px 0;
-        padding: 1rem;
+        margin: 100px 0 30px;
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
     }
 
     #monthly-report {
-        font-size: 0.6rem;
+        width: 100%;
+        padding: 10px 8px;
+        margin: 10px 0;
     }
 
     #monthly-report th,
     #monthly-report td {
-        padding: 8px;
+        padding: 6px 8px;
+        font-size: 0.75rem;
     }
 
     #date {
-        font-size: 0.9rem;
+        font-size: 1rem;
+    }
+
+    button {
+        margin: 8px 5px;
+        padding: 6px;
+        font-size: 0.7rem;
+        width: auto;
+    }
+
+    /* Improve display of buttons on small screens */
+    #actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    #actions button {
+        width: 80%;
+        margin: 5px auto;
     }
 }

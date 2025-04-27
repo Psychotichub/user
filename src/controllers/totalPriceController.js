@@ -53,4 +53,15 @@ const getDateRange = async (req, res) => {
     }
 };
 
-module.exports = { getTotalPrice, addTotalPrice, getTotalPriceByDate, getDateRange };
+const getTotalPriceByLocation = async (req, res) => {
+    const { location } = req.params;
+    try {
+        const totalPrice = await TotalPrice.find({ location });
+        res.status(200).json(totalPrice);
+    } catch (error) {
+        console.error('Error fetching total price by location:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+module.exports = { getTotalPrice, addTotalPrice, getTotalPriceByDate, getDateRange, getTotalPriceByLocation };
