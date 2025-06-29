@@ -318,6 +318,8 @@ function initDailyReport() {
             
             notesInput.value = notes;
             selectedUnit = unit;
+            locationInput= location;
+
             saveButton.textContent = 'Update';
             saveButton.dataset.id = id;
         }

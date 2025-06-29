@@ -31,10 +31,10 @@ const addDailyReport = async (req, res) => {
 
 // Update an existing daily report
 const updateDailyReport = async (req, res) => {
-    const { date, materialName, quantity, notes } = req.body;
+    const { date, materialName, quantity, notes, location } = req.body;
     const { id } = req.params;
 
-    if (!date || !materialName || !quantity) {
+    if (!date || !materialName || !quantity || !location) {
         return res.status(400).json({ message: 'Invalid input' });
     }
 
@@ -42,7 +42,7 @@ const updateDailyReport = async (req, res) => {
         // Find and update the daily report by ID
         const updatedDailyReport = await DailyReport.findByIdAndUpdate(
             id,
-            { date, materialName, quantity, notes },
+            { date, materialName, quantity, notes, location },
             { new: true, runValidators: true }
         );
 
