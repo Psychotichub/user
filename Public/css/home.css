@@ -18,10 +18,12 @@
 }
 
 body {
+    margin: 55px 0;
+    display: flex;
     font-family: 'Poppins', Arial, sans-serif;
     background-color: #f0f2f5;
     color: #333;
-    padding: 20px;
+    padding: 1rem;
     line-height: 1.6;
 }
 
@@ -49,7 +51,6 @@ body {
 
 #page {
     width: 100%;
-    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     background-color: white;
