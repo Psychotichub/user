@@ -39,22 +39,6 @@ function initDailyReport() {
     const showElement = (element) => element.classList.remove('hidden');
     const hideElement = (element) => element.classList.add('hidden');
 
-    nextButton.addEventListener('mouseover', () => {
-        nextButton.textContent = 'Next';
-    });
-
-    nextButton.addEventListener('mouseout', () => {
-        nextButton.innerHTML = '&rarr;';
-    });
-
-    prevButton.addEventListener('mouseover', () => {
-        prevButton.textContent = 'Previous';
-    });
-
-    prevButton.addEventListener('mouseout', () => {
-        prevButton.innerHTML = '&larr;';
-    });
-
 
 //  console.log('Current date:', new Date().toLocaleDateString('en-CA') + ' ' + new Date().toLocaleTimeString());
 
