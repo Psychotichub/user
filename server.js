@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
+const cookieParser = require('cookie-parser');
 
 const dailyReportRoutes = require('./src/routes/dailyReportRoutes');
 const materialRoutes = require('./src/routes/materialRoutes');
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'Public')));
+app.use(cookieParser());
 
 // Serve login page
 app.get('/login', (req, res) => {
@@ -72,7 +74,7 @@ app.use((err, _, res, next) => {
         console.log('Connected to MongoDB');
 
         await connectToMongoose();
-        console.log('Connected to Mongoose');
+        //console.log('Connected to Mongoose');
 
 
         app.listen(port, () => {

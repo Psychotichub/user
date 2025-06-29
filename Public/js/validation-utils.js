@@ -24,11 +24,11 @@ function getStoredValidationKey() {
 // Fetch the validation key from the server
 async function fetchValidationKey() {
     try {
-        console.log('Fetching validation key from server...');
+        //console.log('Fetching validation key from server...');
         const response = await fetch('/validation-key.txt');
         if (response.ok) {
             const key = await response.text();
-            console.log('Validation key fetched successfully');
+            //console.log('Validation key fetched successfully');
             return key;
         } else {
             console.error('Failed to fetch validation key:', response.status);
@@ -43,7 +43,7 @@ async function fetchValidationKey() {
 // Validate the site key - automatically use the key from validation-key.txt
 async function validateSiteKey() {
     try {
-        console.log('Starting auto validation process...');
+        //console.log('Starting auto validation process...');
         
         // First try to get the key directly from the endpoint
         const validationKey = await fetchValidationKey();
@@ -59,7 +59,7 @@ async function validateSiteKey() {
         
         // Set validation status to true since we have a valid key
         setValidationStatus(true);
-        console.log('Site validated successfully');
+        //console.log('Site validated successfully');
         return true;
         
     } catch (error) {
@@ -71,17 +71,17 @@ async function validateSiteKey() {
 
 // Check for validation on page load
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Validation utils loaded, checking site validation...');
+    //console.log('Validation utils loaded, checking site validation...');
     
     // Check if we already have a validated status
     const isValidated = getValidationStatus();
-    console.log('Current validation status:', isValidated);
+    //console.log('Current validation status:', isValidated);
     
     if (!isValidated) {
         // Automatically validate without requiring user input
         const isValid = await validateSiteKey();
         if (isValid) {
-            console.log('Site automatically validated');
+            //console.log('Site automatically validated');
         } else {
             console.error('Site validation failed. Please contact administrator.');
             // Display a message to contact administrator
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Show an error message if automatic validation fails
 function showValidationErrorMessage() {
-    console.log('Showing validation error message');
+    //console.log('Showing validation error message');
     
     // Create a message banner
     const messageContainer = document.createElement('div');

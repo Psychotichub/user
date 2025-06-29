@@ -24,6 +24,8 @@ function initDailyReport() {
     const printButton = document.querySelector('.print');
     const exportButton = document.querySelector('.export');
     const sendDataButton = document.querySelector('.send-data');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
 
     const clearInputs = () => {
         materialNameInput.value = '';
@@ -32,8 +34,27 @@ function initDailyReport() {
         notesInput.value = '';
     };
 
+    
+
     const showElement = (element) => element.classList.remove('hidden');
     const hideElement = (element) => element.classList.add('hidden');
+
+    nextButton.addEventListener('mouseover', () => {
+        nextButton.textContent = 'Next';
+    });
+
+    nextButton.addEventListener('mouseout', () => {
+        nextButton.innerHTML = '&rarr;';
+    });
+
+    prevButton.addEventListener('mouseover', () => {
+        prevButton.textContent = 'Previous';
+    });
+
+    prevButton.addEventListener('mouseout', () => {
+        prevButton.innerHTML = '&larr;';
+    });
+
 
 //  console.log('Current date:', new Date().toLocaleDateString('en-CA') + ' ' + new Date().toLocaleTimeString());
 
@@ -291,6 +312,22 @@ function initDailyReport() {
         }
 
         fetchDailyReportsByDate(selectedDate);
+    });
+
+    prevButton.addEventListener('click', () => {
+        const selectedDate = filterDateInput.value;
+        const previousDate = new Date(selectedDate);
+        previousDate.setDate(previousDate.getDate() - 1);
+        filterDateInput.value = previousDate.toLocaleDateString('en-CA');
+        fetchDailyReportsByDate(previousDate.toLocaleDateString('en-CA'));
+    });
+
+    nextButton.addEventListener('click', () => {
+        const selectedDate = filterDateInput.value;
+        const nextDate = new Date(selectedDate);
+        nextDate.setDate(nextDate.getDate() + 1);
+        filterDateInput.value = nextDate.toLocaleDateString('en-CA');
+        fetchDailyReportsByDate(nextDate.toLocaleDateString('en-CA'));
     });
 
     materialsTable.addEventListener('click', async (event) => {
