@@ -32,10 +32,18 @@ body {
 }
 
 .logo {
-  font-size: 2rem;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  color: #fadf15;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  background: transparent;
+  mix-blend-mode: multiply;
 }
 
 /* Navigation Menu */
@@ -148,8 +156,14 @@ nav {
   }
 
   .logo {
-    font-size: 1.8rem;
     margin-bottom: 10px;
+  }
+  
+  .logo img {
+    height: 35px;
+    max-width: 120px;
+    background: transparent;
+    mix-blend-mode: multiply;
   }
 
   nav {
