@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_only_for_development';
+const JWT_SECRET = process.env.JWT_SECRET ;
 
 // Authenticate middleware - verify token and set req.user
 exports.authenticate = async (req, res, next) => {
