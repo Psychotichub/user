@@ -9,7 +9,7 @@
 }
 
 body {
-  margin: 55px 0;
+  margin: 80px 0 20px;
   display: flex;
   font-family: 'Arial', sans-serif;
   background-color: var(--background-color);
@@ -173,14 +173,140 @@ button:focus {
   display: none !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   body {
-    margin: 150px 0;
-    padding: 1rem;
+    margin: 100px 0 50px;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2.2rem;
   }
 
   #stock table {
-    display: block;
+    width: 95%;
+    margin: 15px auto;
     overflow-x: auto;
+    display: block;
+  }
+
+  #stock th, #stock td {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    margin: 120px 0 50px;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+
+  #stock-search-container {
+    margin-bottom: 1.5rem;
+  }
+
+  #stock-search input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  #stock table {
+    width: 100%;
+    margin: 15px auto;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    display: block;
+    border-radius: 8px;
+  }
+
+  #stock th, #stock td {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+    min-width: 80px;
+    white-space: nowrap;
+  }
+
+  #search-dropdown {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.85rem;
+  }
+
+  button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    margin: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    margin: 140px 0 30px;
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+
+  #stock-search input {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  #stock table {
+    width: 100%;
+    margin: 10px auto;
+    font-size: 0.7rem;
+  }
+
+  #stock th, #stock td {
+    padding: 6px 4px;
+    font-size: 0.7rem;
+    min-width: 60px;
+  }
+
+  #search-dropdown {
+    font-size: 0.75rem;
+    max-height: 100px;
+  }
+
+  button {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    margin: 3px;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    margin: 120px 0 20px;
+    padding: 0.25rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  #stock th, #stock td {
+    padding: 4px 2px;
+    font-size: 0.65rem;
+    min-width: 50px;
+  }
+
+  button {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    margin: 2px;
   }
 }

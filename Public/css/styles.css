@@ -147,12 +147,38 @@ nav {
   padding: 10px 20px;
 }
 
+@media (max-width: 1024px) {
+  body {
+    padding: 2rem;
+    font-size: 0.95rem;
+  }
+
+  .header {
+    padding: 12px 20px;
+  }
+
+  .nav-menu a {
+    font-size: 0.95rem;
+    padding: 4px 12px;
+  }
+
+  .footer {
+    padding: 12px 20px;
+  }
+}
+
 @media (max-width: 768px) {
+  body {
+    padding: 1.5rem;
+    font-size: 0.9rem;
+  }
+
   .header {
     flex-direction: column;
     align-items: center;
     padding: 10px;
     height: auto;
+    min-height: 80px;
   }
 
   .logo {
@@ -184,7 +210,8 @@ nav {
 
   .nav-menu a {
     padding: 5px 10px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   .footer {
@@ -198,6 +225,7 @@ nav {
     margin-top: 10px;
     justify-content: center;
     flex-wrap: wrap;
+    gap: 15px;
   }
 
   .social li {
@@ -206,63 +234,107 @@ nav {
 
   .social a {
     font-size: 0.9rem;
-    padding: 4px 7px;
+    padding: 4px 6px;
   }
 
   #date-time {
-    font-size: 0.9rem;
-    padding: 8px;
+    font-size: 14px;
+    padding: 8px 15px;
     text-align: center;
-  }
-
-  body {
-    padding-top: 120px; /* Adjust based on the height of your header */
   }
 }
 
 @media (max-width: 480px) {
-  .header {
-    padding: 8px 5px;
-  }
-
-  .logo {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
-  }
-
-  .nav-menu {
-    flex-direction: column;
-    width: 100%;
-    gap: 5px;
-  }
-  
-  .nav-menu li {
-    width: 100%;
-    margin: 2px 0;
-    text-align: center;
-  }
-
-  .nav-menu a {
-    padding: 8px;
-    width: 100%;
-    display: block;
+  body {
+    padding: 1rem;
     font-size: 0.85rem;
   }
 
+  .header {
+    padding: 8px;
+    min-height: 70px;
+  }
+
+  .logo img {
+    height: 30px;
+    max-width: 100px;
+  }
+
+  .nav-menu {
+    gap: 5px;
+    padding: 3px 0;
+  }
+
+  .nav-menu li {
+    margin: 2px;
+  }
+
+  .nav-menu a {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
   .footer {
-    padding: 12px 5px;
+    padding: 12px 8px;
+    gap: 8px;
   }
 
   .social {
     gap: 10px;
   }
 
+  .social a {
+    font-size: 0.85rem;
+    padding: 3px 5px;
+  }
+
   #date-time {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  body {
+    padding: 0.75rem;
     font-size: 0.8rem;
   }
 
-  body {
-    padding-top: 200px; /* Adjust based on the height of your expanded menu */
-    padding-bottom: 60px;
+  .header {
+    padding: 6px;
+    min-height: 60px;
+  }
+
+  .logo img {
+    height: 25px;
+    max-width: 80px;
+  }
+
+  .nav-menu {
+    gap: 3px;
+  }
+
+  .nav-menu a {
+    padding: 3px 6px;
+    font-size: 0.75rem;
+  }
+
+  .footer {
+    padding: 10px 6px;
+    gap: 6px;
+  }
+
+  .social {
+    gap: 8px;
+  }
+
+  .social a {
+    font-size: 0.8rem;
+    padding: 2px 4px;
+  }
+
+  #date-time {
+    font-size: 11px;
+    padding: 5px 8px;
   }
 }

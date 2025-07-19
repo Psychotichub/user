@@ -18,7 +18,7 @@
 }
 
 body {
-    margin: 55px 0;
+    margin: 80px 0 20px;
     display: flex;
     font-family: 'Poppins', Arial, sans-serif;
     background-color: #f0f2f5;
@@ -188,6 +188,11 @@ button:focus, .feature-card:focus {
 }
 
 @media (max-width: 1024px) {
+    body {
+        margin: 100px 0 50px;
+        padding: 0.75rem;
+    }
+
     #header h1 {
         font-size: 2.5em;
     }
@@ -206,6 +211,11 @@ button:focus, .feature-card:focus {
 }
 
 @media (max-width: 768px) {
+    body {
+        margin: 120px 0 50px;
+        padding: 0.5rem;
+    }
+
     #head h1 {
         font-size: 2rem;
     }
@@ -221,7 +231,8 @@ button:focus, .feature-card:focus {
 
 @media (max-width: 480px) {
     body {
-        padding: 10px;
+        margin: 140px 0 30px;
+        padding: 0.25rem;
     }
 
     #head h1 {
@@ -246,5 +257,28 @@ button:focus, .feature-card:focus {
 
     #foot {
         font-size: 0.9em;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        margin: 120px 0 20px;
+        padding: 0.1rem;
+    }
+
+    #head h1 {
+        font-size: 1.6rem;
+    }
+
+    .feature-card {
+        padding: 15px;
+    }
+
+    .feature-card h2 {
+        font-size: 1em;
+    }
+
+    .feature-card p {
+        font-size: 0.85em;
     }
 }

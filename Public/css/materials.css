@@ -9,11 +9,12 @@
 }
 
 body {
-  margin: 55px 0;
+  margin: 80px 0 20px;
   display: flex;
   font-family: 'Arial', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  line-height: 1.6;
   padding: 3rem;
   font-size: 1rem;
 }
@@ -269,18 +270,235 @@ button:focus {
   display: none !important;
 }
 
+@media (max-width: 1024px) {
+    body {
+        margin: 100px 0 50px;
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+    }
+
+    #content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    #submitted-table {
+        width: 95%;
+        margin: 15px auto;
+        overflow-x: auto;
+        display: block;
+    }
+
+    #submitted-table th, #submitted-table td {
+        padding: 8px;
+        font-size: 0.85rem;
+        min-width: 100px;
+    }
+
+    #search-material-name {
+        width: 50%;
+    }
+}
+
 @media (max-width: 768px) {
-  body {
-    margin: 150px 0;
-    padding: 1rem;
-  }
+    body {
+        margin: 120px 0 50px;
+        padding: 0.75rem;
+        width: 100%;
+    }
 
-  #content {
-    padding: 1rem;
-  }
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
 
-  .form-table {
-    display: block;
-    overflow-x: auto;
-  }
+    #content {
+        padding: 1rem;
+        width: 100%;
+    }
+
+    input, select {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    #input-table {
+        width: 100%;
+        margin: 15px auto;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    #input-table td {
+        padding: 8px 6px;
+        min-width: 100px;
+    }
+
+    #input-table input[type="text"],
+    #input-table input[type="number"],
+    #input-table select {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    #submitted-table {
+        width: 100%;
+        margin: 15px auto;
+        font-size: 0.8rem;
+        overflow-x: auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    #submitted-table th, #submitted-table td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+        min-width: 80px;
+        white-space: nowrap;
+    }
+
+    #material-dropdown {
+        width: 100%;
+        max-width: 100%;
+        font-size: 0.85rem;
+    }
+    
+    .dropdown {
+        width: 100%;
+        max-height: 120px;
+        font-size: 0.85rem;
+    }
+
+    #search-material-name {
+        width: 70%;
+    }
+
+    #search-dropdown {
+        width: 70%;
+        font-size: 0.85rem;
+    }
+
+    /* Ensure buttons don't overlap */
+    #submit-btn, button.edit-btn, button.delete-btn {
+        margin: 5px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        margin: 140px 0 30px;
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+
+    #content {
+        padding: 0.75rem;
+    }
+
+    input, select {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    #input-table {
+        width: 100%;
+        margin: 10px auto;
+        font-size: 0.75rem;
+    }
+
+    #input-table td {
+        padding: 6px 4px;
+        min-width: 80px;
+    }
+
+    #input-table input[type="text"],
+    #input-table input[type="number"],
+    #input-table select {
+        padding: 6px;
+        font-size: 0.75rem;
+    }
+
+    #submitted-table {
+        width: 100%;
+        margin: 10px auto;
+        font-size: 0.7rem;
+    }
+
+    #submitted-table th, #submitted-table td {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+        min-width: 60px;
+    }
+
+    #material-dropdown {
+        font-size: 0.75rem;
+    }
+
+    .dropdown {
+        font-size: 0.75rem;
+        max-height: 100px;
+    }
+
+    #search-material-name {
+        width: 100%;
+    }
+
+    #search-dropdown {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    /* Hide action buttons on very small screens to save space */
+    #submitted-table th:last-child, #submitted-table td:last-child {
+        display: none;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        margin: 120px 0 20px;
+        padding: 0.25rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    #content {
+        padding: 0.5rem;
+    }
+
+    input, select {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    button {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+        margin: 2px 1px;
+    }
+
+    #input-table td {
+        padding: 4px 2px;
+        min-width: 60px;
+    }
+
+    #submitted-table th, #submitted-table td {
+        padding: 4px 2px;
+        font-size: 0.65rem;
+        min-width: 50px;
+    }
 }

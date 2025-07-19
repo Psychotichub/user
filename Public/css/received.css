@@ -6,13 +6,14 @@
 }
 
 body {
-    margin: 55px 0;
+    margin: 80px 0 20px;
     display: flex;
     font-family: 'Arial', sans-serif;
-    background-color: #f9fafb;
-    color: #333;
+    background-color: var(--background-color);
+    color: var(--text-color);
     line-height: 1.6;
     padding: 3rem;
+    font-size: 1rem;
 }
 
 h1 {
@@ -323,44 +324,194 @@ td {
     border-bottom: none;
 }
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     body {
-        margin: 150px 0;
+        margin: 100px 0 50px;
         padding: 1rem;
     }
 
-    div {
-        flex-direction: column;
-        align-items: flex-start;
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
     }
 
-    label {
-        margin-bottom: 5px;
+    #input-table {
+        width: 95%;
+        margin: 15px auto;
+        overflow-x: auto;
+        display: block;
     }
 
-    input[type="date"] {
-        width: fit-content;
+    #input-table td {
+        padding: 8px;
+        min-width: 120px;
     }
 
-    input[type="text"], input[type="number"] {
-        width: 100%;
+    #data-table, #materials-table {
+        width: 95%;
+        margin: 15px auto;
+        overflow-x: auto;
+        display: block;
     }
 
-    button {
-        width: fit-content;
-        text-align: justify;
-        font-size: 0.7rem;
-    }
-
-    #input-table, #data-table, #materials-table {
-        font-size: 0.9rem;
-    }
-
-    #material-dropdown {
-        font-size: 0.9rem;
+    #data-table th, #materials-table th,
+    #data-table td, #materials-table td {
+        padding: 8px;
+        font-size: 0.85rem;
+        min-width: 100px;
     }
 }
 
-.dropdown.hidden {
-    display: none;
+@media (max-width: 768px) {
+    body {
+        margin: 120px 0 50px;
+        padding: 0.75rem;
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+
+    #input-table {
+        width: 100%;
+        margin: 15px auto;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    #input-table td {
+        padding: 8px 6px;
+        min-width: 100px;
+    }
+
+    #input-table input[type="text"],
+    #input-table input[type="number"] {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    #data-table, #materials-table {
+        width: 100%;
+        margin: 15px auto;
+        font-size: 0.8rem;
+        overflow-x: auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    #data-table th, #materials-table th,
+    #data-table td, #materials-table td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+        min-width: 80px;
+        white-space: nowrap;
+    }
+
+    #saved-data-container {
+        width: 100%;
+        margin: 15px auto;
+    }
+
+    #material-dropdown {
+        width: 100%;
+        max-width: 100%;
+        font-size: 0.85rem;
+    }
+    
+    .dropdown {
+        width: 100%;
+        max-height: 120px;
+        font-size: 0.85rem;
+    }
+
+    /* Ensure buttons don't overlap */
+    #filter-btn, .print {
+        margin: 5px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        margin: 140px 0 30px;
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+
+    #input-table {
+        width: 100%;
+        margin: 10px auto;
+        font-size: 0.75rem;
+    }
+
+    #input-table td {
+        padding: 6px 4px;
+        min-width: 80px;
+    }
+
+    #input-table input[type="text"],
+    #input-table input[type="number"] {
+        padding: 6px;
+        font-size: 0.75rem;
+    }
+
+    #data-table, #materials-table {
+        width: 100%;
+        margin: 10px auto;
+        font-size: 0.7rem;
+    }
+
+    #data-table th, #materials-table th,
+    #data-table td, #materials-table td {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+        min-width: 60px;
+    }
+
+    #material-dropdown {
+        font-size: 0.75rem;
+    }
+
+    .dropdown {
+        font-size: 0.75rem;
+        max-height: 100px;
+    }
+
+    /* Hide action buttons on very small screens to save space */
+    #data-table th:last-child, #materials-table th:last-child,
+    #data-table td:last-child, #materials-table td:last-child {
+        display: none;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        margin: 120px 0 20px;
+        padding: 0.25rem;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    #input-table td {
+        padding: 4px 2px;
+        min-width: 60px;
+    }
+
+    #data-table th, #materials-table th,
+    #data-table td, #materials-table td {
+        padding: 4px 2px;
+        font-size: 0.65rem;
+        min-width: 50px;
+    }
 }
