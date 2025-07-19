@@ -40,13 +40,26 @@ const checkMaterialExists = async (req, res) => {
 
 // Update a material
 const updateMaterial = async (req, res) => {
-    const { materialName, unit, materialPrice, laborPrice } = req.body;
+    const { originalMaterialName, materialName, unit, materialPrice, laborPrice } = req.body;
     try {
+        // Check if the new material name already exists (excluding the current material)
+        if (materialName !== originalMaterialName) {
+            const existingMaterial = await Material.findOne({ materialName });
+            if (existingMaterial) {
+                return res.status(400).json({ message: 'Material name already exists.' });
+            }
+        }
+
         const material = await Material.findOneAndUpdate(
-            { materialName },
-            { unit, materialPrice, laborPrice },
+            { materialName: originalMaterialName },
+            { materialName, unit, materialPrice, laborPrice },
             { new: true }
         );
+        
+        if (!material) {
+            return res.status(404).json({ message: 'Material not found.' });
+        }
+        
         res.json(material);
     } catch (error) {
         res.status(500).json({ message: error.message });

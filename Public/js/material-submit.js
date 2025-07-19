@@ -84,7 +84,13 @@ async function initMaterialSubmit() {
                     const response = await fetch('/material-submit', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ materialName, unit, materialPrice, laborPrice }),
+                        body: JSON.stringify({ 
+                            originalMaterialName: isEditing,
+                            materialName, 
+                            unit, 
+                            materialPrice, 
+                            laborPrice 
+                        }),
                     });
 
                     if (response.ok) {
