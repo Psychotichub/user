@@ -317,6 +317,61 @@ async function initMaterialSubmit() {
         }
     });
 
+    // Add keyboard navigation for material dropdown
+    let selectedDropdownIndex = -1;
+    const dropdown = document.getElementById('material-dropdown');
+
+    materialNameInput.addEventListener('keydown', (e) => {
+        const dropdownItems = dropdown.querySelectorAll('.dropdown-item');
+        
+        if (!dropdownItems.length || dropdown.classList.contains('hidden')) {
+            selectedDropdownIndex = -1;
+            return;
+        }
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedDropdownIndex = Math.min(selectedDropdownIndex + 1, dropdownItems.length - 1);
+                updateDropdownSelection(dropdownItems);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedDropdownIndex = Math.max(selectedDropdownIndex - 1, -1);
+                updateDropdownSelection(dropdownItems);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedDropdownIndex >= 0 && selectedDropdownIndex < dropdownItems.length) {
+                    const selectedItem = dropdownItems[selectedDropdownIndex];
+                    materialNameInput.value = selectedItem.textContent;
+                    dropdown.classList.add('hidden');
+                    selectedDropdownIndex = -1;
+                }
+                break;
+            case 'Escape':
+                dropdown.classList.add('hidden');
+                selectedDropdownIndex = -1;
+                break;
+        }
+    });
+
+    function updateDropdownSelection(dropdownItems) {
+        dropdownItems.forEach((item, index) => {
+            if (index === selectedDropdownIndex) {
+                item.classList.add('selected');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+
+    // Reset selection when input changes
+    materialNameInput.addEventListener('input', () => {
+        selectedDropdownIndex = -1;
+    });
+
     document.addEventListener('click', (e) => {
         const dropdown = document.getElementById('material-dropdown');
         if (!materialNameInput.contains(e.target) && !dropdown.contains(e.target)) {

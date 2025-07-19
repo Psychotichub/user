@@ -382,9 +382,20 @@ td {
     background-color: #ffffff;
 }
 
+#material-dropdown div:hover {
+    background-color: #ec024c;
+    color: #1976d2;
+}
+
+#material-dropdown div.selected {
+    background-color: #2196f3;
+    color: white;
+    font-weight: bold;
+}
+
 #material-dropdown div:active {
-    background-color: #0ab1a4;
-    border-radius: 1rem;
+    background-color: #1976d2;
+    color: white;
 }
 
 
