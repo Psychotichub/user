@@ -1,6 +1,15 @@
 // Simple security utilities to be included on all pages
+// This file is now deprecated - use auth-utils.js instead
+// Keeping for backward compatibility but with reduced functionality
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication status
+    // Only run if auth-utils.js is not loaded
+    if (typeof isAuthenticated === 'function' && typeof verifyAuthentication === 'function') {
+        //console.log('Auth-utils.js is loaded, skipping security-utils.js checks');
+        return;
+    }
+    
+    // Check authentication status (fallback for older pages)
     function checkAuth() {
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
@@ -69,9 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Execute security checks
+    // Execute security checks only if auth-utils.js is not available
     checkAuth();
     applyRoleBasedUI();
     
-    //console.log('Security utilities loaded successfully');
+    //console.log('Security utilities loaded (fallback mode)');
 }); 

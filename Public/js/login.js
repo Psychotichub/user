@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    //console.log('Login page loaded, checking authentication status...');
+    console.log('=== Login Page Loaded ===');
+    console.log('Auth-utils loaded:', typeof isAuthenticated === 'function');
+    console.log('getCurrentUser available:', typeof getCurrentUser === 'function');
+    console.log('verifyAuthentication available:', typeof verifyAuthentication === 'function');
     
     // Check if user is already logged in
     // Try to get auth status either from token or via auth-utils.js if loaded
@@ -8,16 +11,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof isAuthenticated === 'function') {
         // Use the auth-utils function if available
         isAuthed = isAuthenticated();
-        //console.log('Using auth-utils for authentication check:', isAuthed);
+        console.log('Using auth-utils for authentication check:', isAuthed);
     } else {
         // Fallback to basic token check
         const token = localStorage.getItem('token');
-        isAuthed = !!token;
-        //console.log('Basic token check:', isAuthed);
+        const user = localStorage.getItem('user');
+        isAuthed = !!(token && user);
+        console.log('Basic token check:', isAuthed);
+        console.log('Token present:', !!token);
+        console.log('User present:', !!user);
     }
     
     if (isAuthed) {
+        console.log('User appears to be authenticated, redirecting...');
         redirectBasedOnRole();
+    } else {
+        console.log('User not authenticated, staying on login page');
     }
 
     const loginForm = document.getElementById('login-form');
@@ -34,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessage.style.display = 'none';
         
         try {
-            //console.log('Attempting login for user:', username);
+            console.log('Attempting login for user:', username);
             
             const response = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -44,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             const data = await response.json();
-            //console.log('Login response status:', response.status);
+            console.log('Login response status:', response.status);
             
             if (!response.ok) {
                 throw new Error(data.message || 'Login failed');
@@ -53,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Use the improved token storage function if available
             let storageSuccess = false;
             if (typeof storeAuthData === 'function') {
-                //console.log('Using enhanced storage method');
+                console.log('Using enhanced storage method');
                 storageSuccess = storeAuthData(data.token, data.user);
             } else {
-                //console.log('Using standard storage method');
+                console.log('Using standard storage method');
                 try {
                     // Save authentication data using standard method
                     localStorage.removeItem('token');
@@ -80,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Even if localStorage fails, we might still have HTTP-only cookies
             if (!storageSuccess && !data.token) {
-                //console.log('Using HTTP-only cookie for authentication');
+                console.log('Using HTTP-only cookie for authentication');
                 // We can still proceed if server is using HTTP-only cookies
                 storageSuccess = data.success === true;
             }
@@ -89,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Failed to store authentication data. Please check your browser settings.');
             }
             
+            console.log('Login successful, redirecting...');
             // Redirect based on user role
             redirectBasedOnRole();
             
@@ -113,62 +123,60 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to redirect based on user role
 function redirectBasedOnRole() {
     try {
-        let user = null;
-        
-        // Try to get user from auth-utils if available
-        if (typeof getCurrentUser === 'function') {
-            user = getCurrentUser();
-            //console.log('Got user from auth-utils:', user ? 'Found' : 'Not found');
-        } else {
-            // Fallback to localStorage
-            const userStr = localStorage.getItem('user');
-            user = userStr ? JSON.parse(userStr) : null;
-            //console.log('User data from localStorage:', user ? 'Available' : 'Not available');
-        }
-        
-        if (!user) {
-            // If we can't determine the user, try to fetch current user from API
-            //console.log('No user data found, attempting to fetch from API');
-            
-            // Make an API call to get current user
-            fetch('/api/auth/current-user', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include' // Include cookies
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    // If API call fails, redirect to login
-                    throw new Error('Failed to get user data');
-                }
-            })
-            .then(data => {
-                if (data.user) {
-                    // Store user data
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    //console.log('Redirecting user with role from API:', data.user.role || 'unknown');
+        console.log('=== Redirecting based on role ===');
+        // Use the improved authentication verification
+        if (typeof verifyAuthentication === 'function') {
+            console.log('Using verifyAuthentication function');
+            verifyAuthentication().then(isValid => {
+                if (isValid) {
+                    console.log('Authentication verified, redirecting to index');
                     window.location.href = '/index';
                 } else {
-                    throw new Error('No user data returned from API');
+                    console.log('Authentication failed, staying on login page');
+                    // Clear any invalid auth data
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error);
-                window.location.href = '/login';
+            }).catch(error => {
+                console.error('Error verifying authentication:', error);
+                // Clear any invalid auth data
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
             });
-            
-            return; // Return while fetch is in progress
+        } else {
+            console.log('verifyAuthentication not available, using fallback');
+            // Fallback to basic check
+            if (typeof getCurrentUser === 'function') {
+                const user = getCurrentUser();
+                if (user) {
+                    console.log('Redirecting user with role:', user.role || 'unknown');
+                    window.location.href = '/index';
+                } else {
+                    console.log('No user data found, staying on login page');
+                }
+            } else {
+                console.log('getCurrentUser not available, checking localStorage directly');
+                // If auth-utils is not loaded, check localStorage directly
+                const userStr = localStorage.getItem('user');
+                if (userStr) {
+                    try {
+                        const user = JSON.parse(userStr);
+                        console.log('Redirecting user with role from localStorage:', user.role || 'unknown');
+                        window.location.href = '/index';
+                    } catch (error) {
+                        console.error('Error parsing user data:', error);
+                        localStorage.removeItem('user');
+                    }
+                } else {
+                    console.log('No user data found, staying on login page');
+                }
+            }
         }
-        
-        //console.log('Redirecting user with role:', user.role || 'unknown');
-        
-        // Redirect to index page
-        window.location.href = '/index';
     } catch (error) {
         console.error('Error during redirect:', error);
-        window.location.href = '/login';
+        // Clear any invalid auth data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
     }
 }
 

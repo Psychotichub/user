@@ -1,5 +1,8 @@
 // Authentication utilities for handling login, permissions, and role-based access control
 
+// Global flag to prevent multiple redirects
+let isRedirecting = false;
+
 // Function to get the token from localStorage or cookies
 function getToken() {
     // Try getting from localStorage first
@@ -11,25 +14,19 @@ function getToken() {
     return token;
 }
 
-// Function to decode JWT token without verification
+// Function to decode JWT token (basic implementation)
 function decodeToken(token) {
     try {
-        if (!token) return null;
-        
-        // Split the token and get the payload part
+        // Basic JWT decode (for client-side validation)
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(window.atob(base64));
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
         
-        // Check if token is expired
-        if (payload.exp && payload.exp * 1000 < Date.now()) {
-            //console.log('Token has expired');
-            return null;
-        }
-        
-        return payload;
-    } catch (e) {
-        console.error('Error decoding token:', e);
+        return JSON.parse(jsonPayload);
+    } catch (error) {
+        console.error('Error decoding token:', error);
         return null;
     }
 }
@@ -80,12 +77,6 @@ function isAuthenticated() {
     return isAuth;
 }
 
-// Function to check if current user has admin role
-function isAdmin() {
-    const user = getCurrentUser();
-    return user && user.role === 'admin';
-}
-
 // Function to check if user has required role
 function hasRequiredRole(requiredRole) {
     if (!isAuthenticated()) return false;
@@ -98,28 +89,45 @@ function hasRequiredRole(requiredRole) {
     return true; // Regular user role is sufficient
 }
 
-// Function to check authorization for specific actions
-function canPerformAction(action) {
-    if (!isAuthenticated()) return false;
-    
-    const user = getCurrentUser();
-    
-    switch (action) {
-        case 'delete':
-            return user.role === 'admin';
-        case 'addMaterial':
-            return user.role === 'admin';
-        case 'viewTotalPrice':
-            return user.role === 'admin';
-        case 'viewMonthlyReport':
-            return user.role === 'admin';
-        default:
-            return true;
+// Function to check if user is admin
+function isAdmin() {
+    return hasRequiredRole('admin');
+}
+
+// Function to apply role-based UI changes
+function applyRoleBasedUIChanges() {
+    try {
+        const user = getCurrentUser();
+        if (!user) return;
+        
+        const isAdminUser = user.role === 'admin';
+        
+        // Hide admin-only elements for non-admin users
+        if (!isAdminUser) {
+            const adminElements = document.querySelectorAll('.admin-only');
+            adminElements.forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        
+        // Show user-specific elements
+        const userElements = document.querySelectorAll('.user-only');
+        userElements.forEach(el => {
+            el.style.display = 'block';
+        });
+        
+    } catch (err) {
+        console.error('Error applying role-based UI:', err);
     }
 }
 
 // Function to logout user
 function logout() {
+    // Prevent multiple logout calls
+    if (isRedirecting) return;
+    isRedirecting = true;
+    
+    // Clear localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     
@@ -129,17 +137,10 @@ function logout() {
         credentials: 'include' // Include cookies
     }).catch(error => {
         console.error('Error logging out:', error);
+    }).finally(() => {
+        // Redirect to login page
+        window.location.href = '/login';
     });
-    
-    window.location.href = '/login';
-}
-
-// Function to add authorization header to fetch requests
-function authHeader() {
-    const token = getToken();
-    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    //console.log('Auth headers:', token ? 'Authorization header added' : 'No authorization header');
-    return headers;
 }
 
 // Function to store token with cross-browser compatibility in mind
@@ -257,8 +258,33 @@ async function tryRefreshToken() {
     }
 }
 
+// Function to verify authentication with server
+async function verifyAuthentication() {
+    try {
+        const response = await fetch('/api/auth/me', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.user) {
+                // Update localStorage with fresh user data
+                localStorage.setItem('user', JSON.stringify(data.user));
+                return true;
+            }
+        }
+        
+        return false;
+    } catch (error) {
+        console.error('Error verifying authentication:', error);
+        return false;
+    }
+}
+
 // Check for authentication on page load and redirect if needed
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     //console.log("Auth utils loaded, checking authentication...");
     
     // Get the current page URL
@@ -269,11 +295,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const publicPages = ['/login', '/html/login.html'];
     
     // If the current page is not a public page and user is not authenticated
-    if (!publicPages.some(page => currentPage.includes(page)) && !isAuthenticated()) {
-        //console.log("Not authenticated, redirecting to login page");
-        // Redirect to login page
-        window.location.href = '/login';
-        return;
+    if (!publicPages.some(page => currentPage.includes(page))) {
+        if (!isAuthenticated()) {
+            //console.log("Not authenticated, redirecting to login page");
+            if (!isRedirecting) {
+                isRedirecting = true;
+                window.location.href = '/login';
+            }
+            return;
+        }
+        
+        // If we have a token, verify it with the server
+        const isValid = await verifyAuthentication();
+        if (!isValid) {
+            //console.log("Token invalid, clearing auth data and redirecting to login");
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            if (!isRedirecting) {
+                isRedirecting = true;
+                window.location.href = '/login';
+            }
+            return;
+        }
     }
     
     // If authenticated, apply role-based UI changes
@@ -281,17 +324,4 @@ document.addEventListener('DOMContentLoaded', () => {
         //console.log("Authenticated, applying role-based UI changes");
         applyRoleBasedUIChanges();
     }
-});
-
-// Apply role-based changes to UI elements
-function applyRoleBasedUIChanges() {
-    // Hide elements with 'admin-only' class for non-admin users
-    if (!isAdmin()) {
-        const adminOnlyElements = document.querySelectorAll('.admin-only');
-        adminOnlyElements.forEach(element => {
-            element.style.display = 'none';
-        });
-    }
-    
-    //console.log("Security utilities loaded successfully");
-} 
+}); 

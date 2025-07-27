@@ -191,3 +191,100 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 }; 
+
+// Logout user
+exports.logout = async (req, res) => {
+  try {
+    // Clear the HTTP-only cookie
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+    
+    res.status(200).json({
+      success: true,
+      message: 'Logout successful'
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error', 
+      error: error.message 
+    });
+  }
+}; 
+
+// Refresh token
+exports.refreshToken = async (req, res) => {
+  try {
+    // Get token from cookie
+    const token = req.cookies?.token;
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'No token provided' 
+      });
+    }
+    
+    // Verify the existing token
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Get user from database
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
+    }
+    
+    // Create new token
+    const newToken = jwt.sign(
+      { 
+        id: user._id, 
+        username: user.username, 
+        role: user.role,
+        iat: Math.floor(Date.now() / 1000)
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+    
+    // Set new HTTP-only cookie
+    res.cookie('token', newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'strict'
+    });
+    
+    res.status(200).json({
+      success: true,
+      message: 'Token refreshed successfully',
+      token: newToken,
+      user: {
+        id: user._id,
+        username: user.username,
+        role: user.role
+      }
+    });
+    
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        success: false,
+        message: 'Token has expired. Please login again.' 
+      });
+    }
+    
+    res.status(401).json({ 
+      success: false,
+      message: 'Invalid token. Please login again.' 
+    });
+  }
+}; 

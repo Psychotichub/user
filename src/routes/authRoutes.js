@@ -15,4 +15,10 @@ router.get('/me', authenticate, authController.getCurrentUser);
 // Get all users (admin only)
 router.get('/users', authenticate, isAdmin, authController.getAllUsers);
 
+// Logout user
+router.post('/logout', authController.logout);
+
+// Refresh token
+router.post('/refresh-token', authController.refreshToken);
+
 module.exports = router; 
